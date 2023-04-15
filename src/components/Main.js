@@ -10,6 +10,8 @@ import 'firebase/compat/auth';
 
 import {auth} from '../firebase';
 
+import AddPost from "./AddPost";
+
 
 function getModalStyle() {
     return {
@@ -55,31 +57,36 @@ const Main = ()=> {
 
 
 
+
     }
 
     const signUp = (e) => {
         e.preventDefault()
-        auth.createUserWithEmailAndPassword(userEmail, userPassword)
+        auth
+            .createUserWithEmailAndPassword(userEmail, userPassword)
             .then((authUser) => {
                 return authUser.user.updateProfile({
-                    displayName : userName
-                })
+                    displayName: userName,
+                });
             })
-            .catch((e)=>alert(e.message))
+            .catch((error) => alert(error.message));
 
-            setOpenSignUp(false)
+            console.log(user)
+
+        setOpenSignUp(false);
 
 
     }
 
     useEffect(()=>{
 
-        const unsubscribe = auth.onAuthStateChanged((authUser)=>{
-            if (authUser){
-                setUser(authUser)
-            }
-            else{
-                setUser(null)
+        const unsubscribe = auth.onAuthStateChanged((authUser) => {
+            if (authUser) {
+                setUser(authUser);
+                console.log(user)
+                
+            } else {
+                setUser(null);
             }
         })
 
@@ -87,7 +94,7 @@ const Main = ()=> {
             unsubscribe() 
         }
 
-    },[Input])
+    },[user , userName])
 
 
     return (
@@ -179,6 +186,24 @@ const Main = ()=> {
             </div>
 
         </div>
+
+        {user ? 
+            <> 
+            
+
+              <AddPost username={user.displayName}></AddPost>
+
+            </>
+            :<>
+
+                <div className="unauth">
+                    Please <b style={{cursor:'pointer',color:'blue'}} onClick={()=>{setOpenSignIn(true)}}>Login</b>/<b style={{cursor:'pointer',color:'blue'}} onClick={()=>{setOpenSignUp(true)}}>Register</b>to add new post
+
+                </div>
+
+            </>
+
+        }
 
         </div>
 
