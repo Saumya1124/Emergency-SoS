@@ -2,3 +2,28 @@
     height: 30px;
     width: 30px;
 }
+
+.logo_header{
+    display: flex;
+    
+}
+.logo_name{
+    font-size: 20px;
+    margin-left: 10px;
+}
+
+/* Sign In/Up forms */
+.classes.paper{
+    border: 10px solid black;
+}
+.sign_para{
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.makeStyles-paper-2 {
+    border-radius: 20px!important;
+}
+.sign_button{
+    font-weight: 400!important;
+}

@@ -4,13 +4,15 @@ import React, { useState , useEffect} from 'react'
 import { makeStyles } from '@material-ui/core';
 import Modal from "@material-ui/core/Modal";
 import { Button, Input } from "@material-ui/core";
+import { db, auth } from "../firebase";
 
-import firebase from 'firebase/compat/app';
+
+// import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 
-import {auth} from '../firebase';
 
 import AddPost from "./AddPost";
+import GetPosts from "./GetPosts";
 
 
 function getModalStyle() {
@@ -47,6 +49,11 @@ const Main = ()=> {
     const [userPassword, setUserPassword] = useState("");
     const [user , setUser] = useState(null);
 
+    const [posts, setPosts] = useState([])
+
+
+    // SignIn
+
 
     const signIn = (e) => {
         e.preventDefault()
@@ -59,6 +66,9 @@ const Main = ()=> {
 
 
     }
+
+
+    // signUp
 
     const signUp = (e) => {
         e.preventDefault()
@@ -76,14 +86,17 @@ const Main = ()=> {
         setOpenSignUp(false);
 
 
+
     }
+
+    // for setting user data when user logs in 
 
     useEffect(()=>{
 
         const unsubscribe = auth.onAuthStateChanged((authUser) => {
             if (authUser) {
                 setUser(authUser);
-                console.log(user)
+        
                 
             } else {
                 setUser(null);
@@ -94,7 +107,24 @@ const Main = ()=> {
             unsubscribe() 
         }
 
-    },[user , userName])
+    },[])
+
+
+    // for updating post
+
+    useEffect(() => {
+        db.collection("posts")
+            .orderBy("timestamp", "desc")
+            .onSnapshot((snapshot) => {
+                setPosts(
+                    snapshot.docs.map((doc) => ({
+                        id: doc.id,
+                        post: doc.data(),
+                    }))
+                );
+            });
+    }, []);
+
 
 
     return (
@@ -105,7 +135,8 @@ const Main = ()=> {
                 <div style={modalStyle} className={classes.paper}>
                      <form className="app__signup">
                            <center>
-                                <img src={img} alt="Emergency-SOS" className="logo"></img>
+                                {/* <img src={img} alt="Emergency-SOS" className="logo"></img> */}
+                                <p className="sign_para">Be a Helping Hand</p>
                            </center>
 
                            <br/>
@@ -126,7 +157,8 @@ const Main = ()=> {
                            <br/>
                            <br/>
 
-                           <Button type='submit' onClick={signUp}>Sign Up</Button>
+
+                           <Button type='submit' onClick={signUp} className="sign_button" style={{color:'red!important'}}>Sign Up</Button>
 
                      </form>
                 </div>
@@ -134,12 +166,13 @@ const Main = ()=> {
             </Modal>
 
 
-            <Modal open = {openSignIn} onClose={()=>setOpenSignIn(false)}>
+            <Modal open = {openSignIn} onClose={()=>setOpenSignIn(false)} >
 
-                <div style={modalStyle} className={classes.paper}>
+                <div style={{...modalStyle , borderRadius:'20px!important'}} className={classes.paper}>
                      <form className="app__signup">
                            <center>
-                                <img src={img} alt="Emergency-SOS" className="logo"></img>
+                                {/* <img src={img} alt="Emergency-SOS" className="logo"></img> */}
+                                <p className="sign_para">Get In to be Helping Hand</p>
                            </center>
 
                            <br/>
@@ -164,11 +197,16 @@ const Main = ()=> {
 
 
         <div className="app__header">
-            <img src={img} alt="Emergency-SOS" className="logo"></img>
+            <div className="logo_header">
+                <img src={img} alt="Emergency-SOS" className="logo"></img>
+                <p className="logo_name">Emergency-SOS</p>
+            </div>
+            
 
             <div>
                 {
                     user ?<>
+                        <h3>{user.displayName}</h3>
                         <Button variant='contained' color='primary' onClick={()=>{auth.signOut()}}>Log Out</Button>                   
                     </>
                     : <>
@@ -193,6 +231,27 @@ const Main = ()=> {
 
               <AddPost username={user.displayName}></AddPost>
 
+              {/* Available Posts */}
+
+              <div className="app__posts">
+                <div className="app__postright">
+
+                    {/* {user && user.displayName && <h2 style={{ textAlign: ' center' }}>userid: {user.displayName}</h2>} */}
+                    <br />
+                    {posts.map(({id,post}) => 
+                        <GetPosts
+                            key={id}
+                            postId={id}
+                            user={user}
+                            userName={post.userName.username}
+                            caption={post.description}
+                            imageURL={post.imageURL}
+                            
+                        />
+                    )}
+                </div>
+            </div>
+
             </>
             :<>
 
@@ -201,9 +260,14 @@ const Main = ()=> {
 
                 </div>
 
+
             </>
 
         }
+
+
+            
+    
 
         </div>
 

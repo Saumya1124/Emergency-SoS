@@ -5,6 +5,8 @@ import {storage,db} from '../firebase';
 import 'firebase/compat/storage';
 import 'firebase/compat/firestore';
 
+import './AddPost.css'
+
 const AddPost = (username) => {
 
     const [description, setDescription] = useState('');
@@ -56,17 +58,21 @@ const AddPost = (username) => {
     }
 
     return (
+        <div className="post_form">
         <div className="imagesupload"> 
-            <h2>Need help</h2>
+            
+            <center><h2>Need help</h2></center>
             <br/>
-            <input className="file-input" type="file" onChange={handleChange}></input>
             <br/>
-            <TextField id='filled-basic' label='caption here' variant="filled" onChange={(e)=>{setDescription(e.target.value)}} value={description}
-            ></TextField>
+            <input className="file-input" type="file" onChange={handleChange} ></input>
+            <br/>
+            <TextField id='filled-basic' label='Add a description'  onChange={(e)=>{setDescription(e.target.value)}} value={description}
+            style={{backgroundColor:'white'}}></TextField>
             <br/>
             <progress className="progress" value={progress} max='100'></progress>
             <br/>
             <Button variant="contained" color="primary" onClick={handleUpload}>Add Post</Button>
+        </div>
         </div>
     )
 }
