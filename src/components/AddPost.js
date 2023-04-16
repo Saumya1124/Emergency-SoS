@@ -10,6 +10,7 @@ import './AddPost.css'
 const AddPost = (username) => {
 
     const [description, setDescription] = useState('');
+    const [location, setLocation] = useState('');
     const [progress, setProgress] = useState(0);
 
     const [image, setImage]= useState(null);
@@ -45,7 +46,8 @@ const AddPost = (username) => {
                             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                             description: description,
                             imageURL: url,
-                            userName: username
+                            userName: username,
+                            location: location,
                         })
                     })
 
@@ -69,7 +71,9 @@ const AddPost = (username) => {
             <TextField id='filled-basic' label='Add a description'  onChange={(e)=>{setDescription(e.target.value)}} value={description}
             style={{backgroundColor:'white'}}></TextField>
             <br/>
-            <progress className="progress" value={progress} max='100'></progress>
+            <input type="text" placeholder='Mention location' onChange={(e)=>{setLocation(e.target.value)}} value={location} className="post_location"></input>
+            <br/>
+            <progress className="progress" value={progress} max='100' ></progress>
             <br/>
             <Button variant="contained" color="primary" onClick={handleUpload}>Add Post</Button>
         </div>

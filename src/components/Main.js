@@ -246,6 +246,7 @@ const Main = ()=> {
                             userName={post.userName.username}
                             caption={post.description}
                             imageURL={post.imageURL}
+                            location = {post.Location}
                             
                         />
                     )}

@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Avatar from "@material-ui/core/Avatar";
+import './GetPosts.css'
 
-
-function GetPosts({userName,imageURL,caption}) {
+function GetPosts({userName,imageURL,caption,location}) {
 
     
 
     return (
 
-        <div className='postData'>
 
         <div className="post" >
             <div className="post__header">
@@ -30,8 +29,14 @@ function GetPosts({userName,imageURL,caption}) {
                 {caption}
             </p>
 
+            <p className="post__text">
+                {/* <b>{userName}</b>  */}
+                {location}
+            </p>
+
         </div>
-        </div>
+        
+    
         
 
 

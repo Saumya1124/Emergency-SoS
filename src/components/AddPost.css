@@ -1,4 +1,7 @@
 .imagesupload{
-    border: 2px solid black;
     padding: 30px;
+}
+.post_location{
+    border:none;
+    border-bottom: 1px solid grey;
 }
