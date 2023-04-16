@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Avatar from "@material-ui/core/Avatar";
 import './GetPosts.css'
 
-function GetPosts({userName,imageURL,caption,location}) {
+function GetPosts({userName,imageURL,caption,location,dp}) {
 
     
 
@@ -14,7 +14,7 @@ function GetPosts({userName,imageURL,caption,location}) {
                 <Avatar
                     className="post__avatar"
                     alt=''
-                    src=' '
+                    src={dp}
                 />
                 <h3>{userName}</h3>
             </div> 

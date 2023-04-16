@@ -6,13 +6,17 @@ import Modal from "@material-ui/core/Modal";
 import { Button, Input } from "@material-ui/core";
 import { db, auth } from "../firebase";
 
+import firebase from 'firebase/compat/app';
+import {storage} from '../firebase';
+import 'firebase/compat/storage';
+import 'firebase/compat/firestore';
 
-// import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 
 
 import AddPost from "./AddPost";
 import GetPosts from "./GetPosts";
+
 
 
 function getModalStyle() {
@@ -49,7 +53,10 @@ const Main = ()=> {
     const [userPassword, setUserPassword] = useState("");
     const [user , setUser] = useState(null);
 
-    const [posts, setPosts] = useState([])
+    const [posts, setPosts] = useState([]);
+
+    const [dp,setDp] = useState([]);
+    const[userDp , setUserDp] = useState('')
 
 
     // SignIn
@@ -77,17 +84,24 @@ const Main = ()=> {
             .then((authUser) => {
                 return authUser.user.updateProfile({
                     displayName: userName,
+                    // photoURL: userDp,
+                    photoURL: dp[0].post.imageURL
                 });
             })
             .catch((error) => alert(error.message));
 
-            console.log(user)
+            uploadDp()
 
+            
         setOpenSignUp(false);
 
 
 
     }
+
+    console.log(user)
+    console.log(userDp)
+
 
     // for setting user data when user logs in 
 
@@ -126,6 +140,61 @@ const Main = ()=> {
     }, []);
 
 
+    const [image, setImage]= useState(null);
+
+    const handleChangeDp = (e)=> {
+            if(e.target.files[0]){
+                setImage(e.target.files[0])
+            }
+            setUserDp(e.target.files[0])
+
+    }
+
+    const uploadDp = ()=> {
+        const uploadTask = storage.ref(`dp/${image.name}`).put(image);
+
+        uploadTask.on(
+            "state_changed",
+            () => {
+                storage
+                    .ref("dp")
+                    .child(image.name)
+                    .getDownloadURL()
+                    .then(url => {
+                        db.collection("dp").add({
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                            imageURL: url,
+                            userName: userName,
+
+                        })
+                    })
+
+            }
+        )
+
+        
+        // setImage(null)
+
+    }
+
+    useEffect(() => {
+        db.collection("dp")
+            .orderBy("timestamp", "desc")
+            .onSnapshot((snapshot) => {
+                setDp(
+                    snapshot.docs.map((doc) => ({
+                        id: doc.id,
+                        post: doc.data(),
+                    }))
+                );
+            });
+    }, []);
+
+    console.log(posts)
+
+    
+
+
 
     return (
         <div className="app">
@@ -155,6 +224,9 @@ const Main = ()=> {
                            <Input type='password' placeholder="Password" value={userPassword} onChange={(e)=>{setUserPassword(e.target.value)}}></Input>
 
                            <br/>
+
+                           <input className="file-input" type="file" onChange={handleChangeDp} ></input>
+
                            <br/>
 
 
@@ -206,8 +278,15 @@ const Main = ()=> {
             <div>
                 {
                     user ?<>
-                        <h3>{user.displayName}</h3>
-                        <Button variant='contained' color='primary' onClick={()=>{auth.signOut()}}>Log Out</Button>                   
+                        <div className="userData">
+                            <img src={user.photoURL} alt='userDp' className="userDp"></img>
+                            <h3>{user.displayName}</h3>
+
+                            <Button variant='contained' color='primary' onClick={()=>{auth.signOut()}}>Log Out</Button>   
+
+                        </div>
+                        
+                                       
                     </>
                     : <>
 
@@ -229,7 +308,7 @@ const Main = ()=> {
             <> 
             
 
-              <AddPost username={user.displayName}></AddPost>
+              <AddPost username={user.displayName} userDp={user.photoURL}></AddPost>
 
               {/* Available Posts */}
 
@@ -247,7 +326,7 @@ const Main = ()=> {
                             caption={post.description}
                             imageURL={post.imageURL}
                             location = {post.Location}
-                            
+                            dp = {post.userName.userDp}                            
                         />
                     )}
                 </div>
@@ -266,9 +345,6 @@ const Main = ()=> {
 
         }
 
-
-            
-    
 
         </div>
 

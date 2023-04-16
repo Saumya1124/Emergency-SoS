@@ -7,7 +7,7 @@ import 'firebase/compat/firestore';
 
 import './AddPost.css'
 
-const AddPost = (username) => {
+const AddPost = (username,userDp) => {
 
     const [description, setDescription] = useState('');
     const [location, setLocation] = useState('');
@@ -47,7 +47,8 @@ const AddPost = (username) => {
                             description: description,
                             imageURL: url,
                             userName: username,
-                            location: location,
+                            Location: location,
+                            dp : userDp ,
                         })
                     })
 
