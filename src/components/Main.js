@@ -16,6 +16,7 @@ import 'firebase/compat/auth';
 
 import AddPost from "./AddPost";
 import GetPosts from "./GetPosts";
+import Chat from "./Chat";
 
 
 
@@ -98,9 +99,6 @@ const Main = ()=> {
 
 
     }
-
-    console.log(user)
-    console.log(userDp)
 
 
     // for setting user data when user logs in 
@@ -190,7 +188,6 @@ const Main = ()=> {
             });
     }, []);
 
-    console.log(posts)
 
     
 
@@ -308,7 +305,7 @@ const Main = ()=> {
             <> 
             
 
-              <AddPost username={user.displayName} userDp={user.photoURL}></AddPost>
+              <AddPost username={user.displayName} userDp={user.photoURL} user = {user}></AddPost>
 
               {/* Available Posts */}
 
@@ -330,6 +327,14 @@ const Main = ()=> {
                         />
                     )}
                 </div>
+            </div>
+
+
+            {/* Chat */}
+
+            <div>
+                  <Chat username={user.displayName} userDp = {user.photoURL} userId = {user.uid}
+                  user = {user}></Chat>
             </div>
 
             </>
